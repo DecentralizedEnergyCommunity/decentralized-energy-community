@@ -17,14 +17,21 @@ setup-backend:
 
 [private]
 setup-froned:
-    echo "im installing the frontend tools"
+    yarn install
 
 # install all the tools and be ready to go!
 setup:
     mise install -y
     @just setup-backend
     @just setup-frontend
-    # install the front end
-    cd frontend
+    pre-commit install
 
-test:
+
+test-frontend:
+    yarn test
+
+format-frontend:
+    yarn format
+
+format-backend:
+    cd backend && poetry run black
