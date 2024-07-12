@@ -9,17 +9,16 @@ import { AccessControl } from "@openzeppelin/contracts/access/AccessControlEnume
  */
 contract DecentralizedEnergyCommunity is AccessControl {
 	struct Community {
-		uint256 id;
-		string name;
-		Participant[] participants;
+		uint32 id;
 		bool active;
 		bool hasProducer;
+		Participant[] participants;
 	}
 
 	struct Participant {
-		uint256 id;
+		uint32 id;
 		address wallet;
-		Meter[2] meters;
+		Meter[4] meters;
 	}
 
 	struct Meter {
@@ -33,8 +32,8 @@ contract DecentralizedEnergyCommunity is AccessControl {
 		CONSUMER
 	}
 
-	uint256 public communityIds;
-	uint256 public participantIds;
+	uint32 public communityIds;
+	uint32 public participantIds;
 
 	mapping(uint256 => Community) public communities;
 
@@ -46,10 +45,7 @@ contract DecentralizedEnergyCommunity is AccessControl {
 		_setupRole(DEFAULT_ADMIN_ROLE, _defaultAdmin);
 	}
 
-	function createCommunity(
-		string calldata _name,
-		Participant[] calldata _participants
-	) external {
+	function createCommunity(Participant[] calldata _participants) external {
 		require(
 			_participants.length > 0 && _participants.length <= 100,
 			"Invalid number of participants"
@@ -58,7 +54,6 @@ contract DecentralizedEnergyCommunity is AccessControl {
 		// Community is not active until there is at leaste one producer and one consumer
 		Community storage community = communities[++communityIds];
 		community.id = communityIds;
-		community.name = _name;
 
 		// Add the participants to the community
 		for (uint256 i = 0; i < _participants.length; i++) {
