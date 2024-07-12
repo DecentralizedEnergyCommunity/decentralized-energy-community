@@ -12,7 +12,7 @@ lint-backend:
 setup-backend:
     #!/bin/bash
     # install the dependencies of the backend
-    touch backend/.venv
+    mkdir backend/.venv
     cd backend && poetry install
 
 [private]
@@ -26,5 +26,3 @@ setup:
     @just setup-frontend
     # install the front end
     cd frontend
-
-test:
