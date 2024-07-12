@@ -16,7 +16,7 @@ setup-backend:
     cd backend && poetry install
 
 [private]
-setup-froned:
+setup-frontend:
     yarn install
 
 # install all the tools and be ready to go!
