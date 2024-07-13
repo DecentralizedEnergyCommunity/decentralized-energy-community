@@ -12,7 +12,7 @@ class ParticipantSettlement:
     amount_earned: int
 
 
-@dataclass
+@dataclass(frozen=True)
 class SettlementResult:
     id: TimePeriod
     community_id: CommunityId
