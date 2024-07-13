@@ -1,12 +1,53 @@
+
 from datetime import datetime, timezone
+import dataclasses
+import datetime
 
-from backend.src.domain.meterdata import Granularity
-from backend.src.fluvius.meterdata_fetcher import MeterDataFetcher
+
+Meter=str
+ParticipantId=int
+CommunityId=int
+
+@dataclasses.dataclass
+class Participant:
+    id: ParticipantId
+    active: bool
+    meters: list[Meter]
+@dataclasses.dataclass
+class Community:
+    id: CommunityId
+    participants: list[Participant]
+
+@dataclasses.dataclass
+class ParticipantResult:
+    participantId: ParticipantId
+    value: int
+
+@dataclasses.dataclass
+class SettlementResult:
+    communityId: CommunityId
+    results: list[ParticipantResult]
+
+async def settle(date: datetime.datetime, community: Community) -> SettlementResult:
+    # todo add the settlement magic here!!!
+    return SettlementResult(1, [])
+
+def getCommunities() -> list[Community]:
+    # get the community from the smart contract.
+    return []
+
+def updateContract(result : SettlementResult) -> None:
+    # todo write this back to the contract
+    return None
 
 
+async def run() -> None:
+    communities = getCommunities()
+
+    for c in communities:
+        result = await settle(c)
+        updateContract(result)
+
+        
 if __name__ == '__main__':
-    start = datetime(2024, 7, 7, 22, 00, tzinfo=timezone.utc)
-    end = datetime(2024, 7, 11, 22, 00, tzinfo=timezone.utc)
-
-    MeterDataFetcher().fetch_meter_data('541448860010420847', start, end, Granularity.QUARTER_H)
-
+    run()
