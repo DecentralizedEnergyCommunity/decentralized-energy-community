@@ -22,8 +22,8 @@ const deployDecentralizedEnergyCommunity: DeployFunction = async function (hre: 
   const { deployer } = await hre.getNamedAccounts();
   const { deploy } = hre.deployments;
 
-  const eurcAddress = process.env.EURC_ADDRESS;
-  console.log("eurcAddress:", eurcAddress);
+  // Get the address of the EURC token to be used by the contract. If not defined, use the Ethereum Sepolia address
+  const eurcAddress = process.env.EURC_ADDRESS ?? "0x08210F9170F89Ab7658F0B5E3fF39b0E03C594D4";
 
   await deploy("DecentralizedEnergyCommunity", {
     from: deployer,
