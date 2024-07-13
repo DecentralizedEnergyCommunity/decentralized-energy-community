@@ -8,7 +8,7 @@ app = FastAPI()
 
 repo = repository.Repository.create()
 
-@app.post("api/create-ean")
-def store_ean(mapping: repository.EanMapping) -> None:
-    repo.add_ean_hash(mapping)
+@app.post("/api/create-ean")
+async def store_ean(mapping: repository.EanMapping) -> None:
+    await repo.add_ean_hash(mapping)
     return None
