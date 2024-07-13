@@ -13,3 +13,12 @@ class MeterType:
 class Meter:
     meter_type: MeterType
     ean: EAN
+
+    @property
+    def is_producer(self):
+        return self.meter_type == MeterType.PRODUCER
+
+    @property
+    def is_consumer(self):
+        return self.meter_type == MeterType.CONSUMER
+

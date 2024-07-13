@@ -1,7 +1,7 @@
 
 lint-mypy:
     #/bin/bash
-    cd backend && poetry run mypy .
+    cd backend && poetry run mypy src
 
 watch-lint-mypy:
     #/bin/bash
