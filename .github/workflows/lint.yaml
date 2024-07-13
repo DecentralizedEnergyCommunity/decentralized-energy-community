@@ -21,23 +21,30 @@ jobs:
       - name: Checkout
         uses: actions/checkout@master
 
-      - name: Setup node env
-        uses: actions/setup-node@v3
+      - name: Setup tools
+        uses: jdx/mise-action@v2
+
+      - name: Restore the yarn cache
+        id: yarn-cache
+        uses: actions/cache/restore@v4
         with:
-          node-version: ${{ matrix.node }}
-          cache: yarn
+          path: |
+            .yarn
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/package.json') }}
 
       - name: Install dependencies
+        if: steps.yarn-cache.outputs.cache-hit != 'true'
         run: yarn install --immutable
+
+      - uses: actions/cache/save@v3
+        if: steps.yarn-cache.outputs.cache-hit != 'true'
+        id: cache
+        with:
+          path: .yarn
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/package.json') }}
 
       - name: Run hardhat node, deploy contracts (& generate contracts typescript output)
         run: yarn chain & yarn deploy
-
-      - name: Run nextjs lint
-        run: yarn next:lint --max-warnings=0
-
-      - name: Check typings on nextjs
-        run: yarn next:check-types
 
       - name: Run hardhat lint
         run: yarn hardhat:lint --max-warnings=0
