@@ -20,7 +20,7 @@ async def settle(period: TimePeriodId, community: Community) -> SettlementResult
             continue
 
         for meter in participant.meters:
-            meterdata= MeterData.from_file(meter.ean, time_period)
+            meterdata = MeterData.from_file(meter.ean, time_period)
             pool_consumed_energy_series.append(meterdata.production)
             pool_produced_energy_series.append(meterdata.consumption)
 
@@ -56,7 +56,6 @@ async def settle(period: TimePeriodId, community: Community) -> SettlementResult
         # sum the meters
         eans = [meter.ean for meter in participant.meters]
 
-        # todo make sure we use ints
         amount_paid = settled_euros_consumer[eans].sum(axis=1).sum()
         amount_earned = settled_euros_producer[eans].sum(axis=1).sum()
         results.append(
@@ -68,7 +67,8 @@ async def settle(period: TimePeriodId, community: Community) -> SettlementResult
 
 def get_monthly_price(month: date) -> float:
     """
-    We use spread between average price for injection and consumption for july, according to vreg (belgian energy regulator)
+    We use spread between average price for injection and consumption for july, according to Vreg website (belgian energy regulator).
+    This data can be fetched from their API instead
     """
     return (0.34 - 0.04) / 2
 
