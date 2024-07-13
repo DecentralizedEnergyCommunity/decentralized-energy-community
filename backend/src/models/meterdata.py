@@ -32,14 +32,14 @@ class MeterData:
 
     @property
     def start(self) -> datetime:
-        return pd.to_datetime(self.readings.index[0])
+        return pd.to_datetime(self.consumption.index[0])
 
     @property
     def end(self) -> datetime:
-        return pd.to_datetime(self.readings.index[-1])
+        return pd.to_datetime(self.consumption.index[-1])
 
     @staticmethod
-    def load_csv(filename: str, time_period: TimePeriod) -> (pd.DataFrame, pd.DataFrame):
+    def load_csv(ean: EAN, filename: str, time_period: TimePeriod) -> (pd.DataFrame, pd.DataFrame):
         folder = Path(Path(__file__).parent.parent.parent / "data")
         df = pd.read_csv(Path(folder / filename), delimiter=';')
         index = pd.DatetimeIndex(
@@ -57,7 +57,7 @@ class MeterData:
     @staticmethod
     def from_csv(ean: EAN, time_period: TimePeriod) -> MeterData:
         if ean in files:
-            consumption, production = MeterData.load_csv(files[ean], time_period)
+            consumption, production = MeterData.load_csv(ean, files[ean], time_period)
         else:
             raise Exception(f"No data for {ean}!")
         return MeterData(ean, consumption, production)
@@ -77,7 +77,7 @@ class MeterData:
         response = requests.get(endpoint, headers=headers)
         print(response.text)
 
-        consumption, production = (MeterData.load_csv(io.StringIO(response.text), index_col=0))
+        consumption, production = (MeterData.load_csv(ean, io.StringIO(response.text), index_col=0))
         return MeterData(ean, consumption, production)
 
 
@@ -89,18 +89,9 @@ files = {
     '541449500000446547': 'Verbruikshistoriek_elektriciteit_541449500000446547_20240624_20240709_dagtotalen.csv'
 }
 
-
-@dataclass(frozen=True)
-class SharingKey:
-    producer: Participant
-    participant: Participant
-    key: float
-
-
 if __name__ == '__main__':
     for ean in files.keys():
         MeterData.from_csv(ean, TimePeriod(genesis, genesis + timedelta(weeks=1)))
-
 
 
 
