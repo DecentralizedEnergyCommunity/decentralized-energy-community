@@ -1,4 +1,5 @@
 import dataclasses
+import datetime
 
 from fastapi import FastAPI
 
@@ -32,7 +33,7 @@ class SettlementResult:
     communityId: CommunityId
     results: list[ParticipantResult]
 
-async def settle(community: Community) -> SettlementResult:
+async def settle(date: datetime.datetime, community: Community) -> SettlementResult:
     # todo add the settlement magic here!!!
     return SettlementResult(1, [])
 
