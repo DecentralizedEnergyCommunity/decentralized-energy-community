@@ -47,7 +47,7 @@ class MeterData:
         time_slice = pd.DataFrame.from_dict({"timestamp": index,
              ean: volume,
              "type": df["Register"]
-         }).set_index("timestamp").loc[time_period.start:time_period.end]
+         }).set_index("timestamp").loc[time_period.start:time_period.end_exclusive]
         production = time_slice.loc[time_slice["type"].str.startswith("Injectie")].drop(columns=["type"])[ean]
         consumption = time_slice.loc[time_slice["type"].str.startswith("Afname")].drop(columns=["type"])[ean]
         return consumption, production
@@ -81,7 +81,7 @@ class MeterData:
 
 files = {
     '541448820044186577': 'Verbruikshistoriek_elektriciteit_541448820044186577_20220110_20240708_kwartiertotalen.csv',
-    '541448820060527996': 'Verbruikshistoriek_elektriciteit_541448820044186577_20220110_20240708_kwartiertotalen.csv',
+    '541448820060527996': 'Verbruikshistoriek_elektriciteit_541448820060527996_20240517_20240712_kwartiertotalen.csv',
     '541448820072026166': 'Verbruikshistoriek_elektriciteit_541448820072026166_20240707_20240709_kwartiertotalen.csv',
     '541448860010420847': 'Verbruikshistoriek_elektriciteit_541448860010420847_20240708_20240709_kwartiertotalen.csv',
     '541449500000446547': 'Verbruikshistoriek_elektriciteit_541449500000446547_20240624_20240709_dagtotalen.csv'
