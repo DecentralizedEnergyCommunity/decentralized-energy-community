@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import io
+import typing
 import urllib
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
@@ -36,7 +37,7 @@ class MeterData:
         return pd.to_datetime(self.consumption.index[-1])
 
     @staticmethod
-    def load_csv(ean: EAN, filename: str, time_period: TimePeriod) -> (pd.DataFrame, pd.DataFrame):
+    def _load_csv(ean: EAN, filename: str, time_period: TimePeriod) -> typing.Tuple[pd.Series, pd.Series]:
         folder = Path(Path(__file__).parent.parent.parent / "data")
         df = pd.read_csv(Path(folder / filename), delimiter=';')
         index = pd.DatetimeIndex(
@@ -52,9 +53,9 @@ class MeterData:
         return consumption, production
 
     @staticmethod
-    def from_csv(ean: EAN, time_period: TimePeriod) -> MeterData:
+    def from_file(ean: EAN, time_period: TimePeriod) -> MeterData:
         if ean in files:
-            consumption, production = MeterData.load_csv(ean, files[ean], time_period)
+            consumption, production = MeterData._load_csv(ean, files[ean], time_period)
         else:
             raise Exception(f"No data for {ean}!")
         return MeterData(ean, consumption, production)
@@ -74,7 +75,7 @@ class MeterData:
         response = requests.get(endpoint, headers=headers)
         print(response.text)
 
-        consumption, production = (MeterData.load_csv(ean, io.StringIO(response.text), index_col=0))
+        consumption, production = MeterData._load_csv(ean, io.StringIO(response.text))
         return MeterData(ean, consumption, production)
 
 
@@ -88,7 +89,7 @@ files = {
 
 if __name__ == '__main__':
     for ean in files.keys():
-        MeterData.from_csv(ean, TimePeriod(genesis, genesis + timedelta(weeks=1)))
+        MeterData.from_file(ean, TimePeriod(genesis, genesis + timedelta(weeks=1)))
 
 
 

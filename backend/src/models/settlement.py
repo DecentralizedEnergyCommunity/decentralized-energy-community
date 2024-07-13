@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from models import participant
 from models.community import CommunityId
 
-SettlmentId = int
+SettlementId = int
 
 
 @dataclass(frozen=True)
@@ -15,5 +15,6 @@ class ParticipantSettlement:
 
 @dataclass
 class SettlementResult:
+    id: SettlementId
     communityId: CommunityId
     results: list[ParticipantSettlement]

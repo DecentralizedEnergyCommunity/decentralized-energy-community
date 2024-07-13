@@ -5,7 +5,7 @@ import pandas as pd
 from models.community import Community
 from models.meter import MeterType
 from models.meterdata import MeterData
-from models.settlement import SettlementResult
+from models.settlement import SettlementResult, SettlementId
 from models.timeperiod import TimePeriod
 
 
@@ -21,7 +21,7 @@ async def settle(period: SettlementId, community: Community) -> SettlementResult
             continue
 
         for meter in participant.meters:
-            meterdata= MeterData.from_csv(meter.ean, time_period)
+            meterdata= MeterData.from_file(meter.ean, time_period)
             pool_consumed_energy_series.append(meterdata.production)
             pool_produced_energy_series.append(meterdata.consumption)
 
