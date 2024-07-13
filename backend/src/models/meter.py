@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import NewType
 
-EAN = NewType('EAN', str)
+EAN = NewType("EAN", str)
 
 
 class MeterType:
@@ -21,4 +21,3 @@ class Meter:
     @property
     def is_consumer(self):
         return self.meter_type == MeterType.CONSUMER
-

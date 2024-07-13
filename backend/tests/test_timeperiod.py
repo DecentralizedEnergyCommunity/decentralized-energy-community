@@ -6,4 +6,3 @@ def test_timeperiod_genesis():
 
     assert timeperiod.start == genesis
     assert timeperiod.end == genesis + frequency
-

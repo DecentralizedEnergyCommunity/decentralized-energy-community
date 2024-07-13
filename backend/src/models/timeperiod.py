@@ -20,10 +20,9 @@ class TimePeriod:
 
     @staticmethod
     def quarter_hour(start: datetime) -> TimePeriod:
-        return TimePeriod(start, start+frequency)
+        return TimePeriod(start, start + frequency)
 
     @staticmethod
     def from_id(id: TimePeriodId) -> TimePeriod:
         start = genesis + frequency * id
-        return TimePeriod(start, start+frequency)
-
+        return TimePeriod(start, start + frequency)
