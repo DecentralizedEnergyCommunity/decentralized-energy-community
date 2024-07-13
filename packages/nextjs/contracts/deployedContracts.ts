@@ -16,6 +16,11 @@ const deployedContracts = {
               name: "_defaultAdmin",
               type: "address",
             },
+            {
+              internalType: "address",
+              name: "_token",
+              type: "address",
+            },
           ],
           stateMutability: "nonpayable",
           type: "constructor",
@@ -109,6 +114,32 @@ const deployedContracts = {
           type: "function",
         },
         {
+          inputs: [],
+          name: "MAX_PARTICIPANTES_PER_COMMUNITY",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "MAX_SETTLEMENTS",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
           inputs: [
             {
               internalType: "uint32",
@@ -141,6 +172,25 @@ const deployedContracts = {
           name: "addMeterToParticipant",
           outputs: [],
           stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          name: "balances",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
           type: "function",
         },
         {
@@ -228,6 +278,11 @@ const deployedContracts = {
               name: "_meters",
               type: "tuple[]",
             },
+            {
+              internalType: "uint256",
+              name: "_escrowAmount",
+              type: "uint256",
+            },
           ],
           name: "createCommunity",
           outputs: [],
@@ -248,6 +303,30 @@ const deployedContracts = {
               internalType: "bool",
               name: "",
               type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "value",
+              type: "uint256",
+            },
+            {
+              internalType: "bytes32",
+              name: "salt",
+              type: "bytes32",
+            },
+          ],
+          name: "generateHash",
+          outputs: [
+            {
+              internalType: "bytes32",
+              name: "generatedHash",
+              type: "bytes32",
             },
           ],
           stateMutability: "view",
@@ -338,8 +417,13 @@ const deployedContracts = {
               name: "_meters",
               type: "tuple[]",
             },
+            {
+              internalType: "uint256",
+              name: "_escrowAmount",
+              type: "uint256",
+            },
           ],
-          name: "joindCommunity",
+          name: "joinCommunity",
           outputs: [],
           stateMutability: "nonpayable",
           type: "function",
@@ -413,6 +497,19 @@ const deployedContracts = {
               internalType: "bool",
               name: "",
               type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "token",
+          outputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
             },
           ],
           stateMutability: "view",
