@@ -2,6 +2,7 @@
 pragma solidity 0.8.17;
 
 import { AccessControl } from "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 /**
  * @title   DecentralizedEnergyCommunity
@@ -12,15 +13,15 @@ contract DecentralizedEnergyCommunity is AccessControl {
 		uint32 id;
 		bool active;
 		bool hasProducer;
-		bool hasConsumer;
 		uint32 participantCount;
 		mapping(uint32 => Participant) participants;
 	}
 
 	struct Participant {
-		uint32 id;
-		address wallet;
+		uint32 index; // index in community's participants mapping
 		uint32 meterCount;
+		address wallet;
+		bool active;
 		mapping(uint32 => Meter) meters;
 	}
 
@@ -36,8 +37,8 @@ contract DecentralizedEnergyCommunity is AccessControl {
 	}
 
 	uint32 public communityIds;
-	uint32 public participantIds;
 	mapping(uint32 => Community) public communities;
+	mapping(address => uint32) public participantAddressToCommunity;
 
 	/**
 	 * @notice  Constructor of the contract
@@ -54,48 +55,85 @@ contract DecentralizedEnergyCommunity is AccessControl {
 		);
 
 		uint32 communityId = communityIds++;
-		uint32 participantId = participantIds++;
 
 		Community storage newCommunity = communities[communityId];
 		newCommunity.id = communityId;
-		newCommunity.active = true;
+		newCommunity.active = false;
 		newCommunity.participantCount = 1;
 
 		Participant storage newParticipant = newCommunity.participants[0];
-		newParticipant.id = participantId;
+		newParticipant.index = newCommunity.participantCount;
 		newParticipant.wallet = msg.sender;
 		newParticipant.meterCount = uint32(_meters.length);
 
 		bool hasProducer = false;
-		bool hasConsumer = false;
+		for (uint32 i = 0; i < _meters.length; i++) {
+			newParticipant.meters[i] = _meters[i];
+			if (_meters[i].meterType == MeterType.PRODUCER) {
+				hasProducer = true;
+			}
+		}
+
+		newCommunity.hasProducer = hasProducer;
+		participantAddressToCommunity[msg.sender] = communityId;
+	}
+
+	function joindCommunity(
+		uint32 _communityId,
+		Meter[] calldata _meters
+	) external {
+		require(
+			_meters.length > 0 && _meters.length <= 4,
+			"Invalid number of meters"
+		);
+
+		require(
+			participantAddressToCommunity[msg.sender] == 0,
+			"Participant already in a community"
+		);
+
+		Community storage newCommunity = communities[_communityId];
+		uint32 participantCount = ++newCommunity.participantCount;
+		newCommunity.participantCount = participantCount;
+
+		Participant storage newParticipant = newCommunity.participants[
+			participantCount - 1
+		];
+		newParticipant.index = newCommunity.participantCount;
+		newParticipant.wallet = msg.sender;
+		newParticipant.meterCount = uint32(_meters.length);
+
+		bool hasProducer = false;
+		bool active = false;
 		for (uint32 i = 0; i < _meters.length; i++) {
 			newParticipant.meters[i] = _meters[i];
 			if (_meters[i].meterType == MeterType.PRODUCER) {
 				hasProducer = true;
 			} else if (_meters[i].meterType == MeterType.CONSUMER) {
-				hasConsumer = true;
+				if (hasProducer) {
+					active = true;
+				}
 			}
 		}
 
 		newCommunity.hasProducer = hasProducer;
-		newCommunity.hasConsumer = hasConsumer;
+		newCommunity.active = active;
+		participantAddressToCommunity[msg.sender] = _communityId;
 	}
 
-	function communityHasProducerAndConsumer(
-		uint32 _communityId
-	) public view returns (bool) {
+	function communityIsActive(uint32 _communityId) public view returns (bool) {
 		Community storage community = communities[_communityId];
-		return community.hasProducer && community.hasConsumer;
+		return community.active;
 	}
 
 	function addMeterToParticipant(
 		uint32 _communityId,
-		uint32 _participantId,
+		uint32 _participantIndex,
 		Meter calldata _newMeter
 	) external {
 		Community storage community = communities[_communityId];
 		Participant storage participant = community.participants[
-			_participantId
+			_participantIndex
 		];
 
 		require(
@@ -106,10 +144,15 @@ contract DecentralizedEnergyCommunity is AccessControl {
 		participant.meters[participant.meterCount] = _newMeter;
 		participant.meterCount++;
 
+		bool hasProducer = false;
+		bool active = false;
+
 		if (_newMeter.meterType == MeterType.PRODUCER) {
-			community.hasProducer = true;
+			hasProducer = true;
 		} else if (_newMeter.meterType == MeterType.CONSUMER) {
-			community.hasConsumer = true;
+			if (hasProducer) {
+				active = true;
+			}
 		}
 	}
 }
