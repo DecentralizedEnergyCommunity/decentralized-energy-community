@@ -26,7 +26,7 @@ const scaffoldConfig = {
   // You can get your own at https://app.dynamic.xyz/
   // It's recommended to store it in an env variable:
   // .env.local for local testing, and in the Vercel/system env config for live apps.
-  dynamicEnvId: process.env.NEXT_PUBLIC_DYNAMIC_ENVIRONMENT_ID || "96bae37d-7ed7-44aa-9081-79bb984508fe",
+  dynamicEnvId: process.env.NEXT_PUBLIC_DYNAMIC_ENVIRONMENT_ID || "9643e4b5-8ae7-467f-b298-93f5aa4e7cad",
 
   // Only show the Burner Wallet when running on hardhat network
   onlyLocalBurnerWallet: true,

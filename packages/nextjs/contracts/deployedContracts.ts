@@ -71,8 +71,7 @@ const deployedContracts = {
                 },
               ],
               indexed: false,
-              internalType:
-                "struct IDecentralizedEnergyCommunity.ParticipantSettlement[]",
+              internalType: "struct IDecentralizedEnergyCommunity.ParticipantSettlement[]",
               name: "settlements",
               type: "tuple[]",
             },
@@ -460,9 +459,21 @@ const deployedContracts = {
                   type: "uint8",
                 },
                 {
-                  internalType: "bytes32",
-                  name: "meterEAN",
-                  type: "bytes32",
+                  components: [
+                    {
+                      internalType: "enum DecentralizedEnergyCommunity.MeterType",
+                      name: "meterType",
+                      type: "uint8",
+                    },
+                    {
+                      internalType: "bytes32",
+                      name: "meterEAN",
+                      type: "bytes32",
+                    },
+                  ],
+                  internalType: "struct DecentralizedEnergyCommunity.Meter[]",
+                  name: "meters",
+                  type: "tuple[]",
                 },
               ],
               internalType: "struct IDecentralizedEnergyCommunity.Meter[]",
@@ -712,8 +723,7 @@ const deployedContracts = {
                   type: "uint256",
                 },
               ],
-              internalType:
-                "struct IDecentralizedEnergyCommunity.ParticipantSettlement[]",
+              internalType: "struct IDecentralizedEnergyCommunity.ParticipantSettlement[]",
               name: "_settlements",
               type: "tuple[]",
             },
@@ -1295,8 +1305,7 @@ const deployedContracts = {
                 },
               ],
               indexed: false,
-              internalType:
-                "struct IDecentralizedEnergyCommunity.ParticipantSettlement[]",
+              internalType: "struct IDecentralizedEnergyCommunity.ParticipantSettlement[]",
               name: "settlements",
               type: "tuple[]",
             },
@@ -1936,8 +1945,7 @@ const deployedContracts = {
                   type: "uint256",
                 },
               ],
-              internalType:
-                "struct IDecentralizedEnergyCommunity.ParticipantSettlement[]",
+              internalType: "struct IDecentralizedEnergyCommunity.ParticipantSettlement[]",
               name: "_settlements",
               type: "tuple[]",
             },
