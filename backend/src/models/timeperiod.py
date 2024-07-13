@@ -14,6 +14,10 @@ class TimePeriod:
     start: datetime
     end: datetime
 
+    @property
+    def end_exclusive(self):
+        return self.end - timedelta(minutes=15)
+
     @staticmethod
     def from_datetime(start: datetime) -> TimePeriod:
         return TimePeriod(start, start+frequency)
