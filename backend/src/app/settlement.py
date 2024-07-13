@@ -58,7 +58,9 @@ async def settle(time_period: TimePeriod, community: Community) -> SettlementRes
         amount_paid = settled_euros_consumer[eans].sum(axis=1).sum()
         amount_earned = settled_euros_producer[eans].sum(axis=1).sum()
         results.append(
-            ParticipantSettlement(participant_id=participant.id, amount_paid=amount_paid, amount_earned=amount_earned)
+            ParticipantSettlement(
+                eans=eans, participant_id=participant.id, amount_paid=amount_paid, amount_earned=amount_earned
+            )
         )
 
     return SettlementResult(time_period, community.id, results)
@@ -66,7 +68,7 @@ async def settle(time_period: TimePeriod, community: Community) -> SettlementRes
 
 def get_monthly_price_eur_kwh(month: date) -> decimal.Decimal:
     """
-    We use spread between average price for injection and consumption for july, according to Vreg website (belgian energy regulator).
+    We use spread between average price for injection and consumption for july, according to Vreg website (Belgian energy regulator).
     This data can be fetched from their API instead
     """
     return (0.34 - 0.04) / 2
