@@ -9,4 +9,3 @@ contract_address = '0xYourContractAddress'
 contract = web3.eth.contract(address=contract_address, abi=contract_abi)
 
 
-contract.
