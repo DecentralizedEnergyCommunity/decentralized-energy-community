@@ -1,52 +1,26 @@
 //SPDX-License-Identifier: MIT
 pragma solidity 0.8.17;
 
+import { IDecentralizedEnergyCommunity } from "./IDecentralizedEnergyCommunity.sol";
 import { AccessControl } from "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
-import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import { IERC20Metadata } from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 /**
  * @title   DecentralizedEnergyCommunity
  * @notice  This contract is the main contract for the Decentralized Energy Community
  */
-contract DecentralizedEnergyCommunity is AccessControl {
-	using SafeERC20 for IERC20;
+contract DecentralizedEnergyCommunity is
+	IDecentralizedEnergyCommunity,
+	AccessControl
+{
+	using SafeERC20 for IERC20Metadata;
 
-	struct Community {
-		uint32 id;
-		bool active;
-		bool hasProducer;
-		uint32 participantCount;
-		mapping(uint32 => Participant) participants;
-	}
-
-	struct Participant {
-		uint32 index; // index in community's participants mapping
-		uint32 meterCount;
-		address wallet;
-		bool active;
-		mapping(uint32 => Meter) meters;
-	}
-
-	struct ParticipantSettlement {
-		address wallet;
-		uint256 amountEarned;
-		uint256 amountPaid;
-	}
-
-	struct Meter {
-		MeterType meterType;
-		bytes32 meterEAN; // hashed EAN code
-	}
-
-	enum MeterType {
-		NONE,
-		PRODUCER,
-		CONSUMER
-	}
-
+	bytes32 public constant SETTLEMENT_ADMIN_ROLE =
+		keccak256("SETTLEMENT_ADMIN_ROLE");
 	uint256 public constant MAX_PARTICIPANTES_PER_COMMUNITY = 100;
 	uint256 public constant MAX_SETTLEMENTS = 100;
+	uint256 public immutable minEscrowAmount;
 
 	uint32 public communityIds;
 	address public token;
@@ -63,19 +37,20 @@ contract DecentralizedEnergyCommunity is AccessControl {
 	constructor(address _defaultAdmin, address _token) {
 		_setupRole(DEFAULT_ADMIN_ROLE, _defaultAdmin);
 		token = _token;
+		minEscrowAmount = 100 * (10 ** IERC20Metadata(_token).decimals()); //100 in token decimals
 	}
 
 	function createCommunity(
 		Meter[] calldata _meters,
 		uint256 _escrowAmount
-	) external {
+	) external override {
 		require(
 			_meters.length > 0 && _meters.length <= 4,
 			"Invalid number of meters"
 		);
 
 		// User should have approved this contract to transfer the escrow amount
-		IERC20(token).safeTransferFrom(
+		IERC20Metadata(token).safeTransferFrom(
 			msg.sender,
 			address(this),
 			_escrowAmount
@@ -112,13 +87,15 @@ contract DecentralizedEnergyCommunity is AccessControl {
 
 		newCommunity.hasProducer = hasProducer;
 		participantAddressToCommunity[msg.sender] = communityId;
+
+		emit CommunityCreated(communityId, msg.sender, _meters, _escrowAmount);
 	}
 
 	function joinCommunity(
 		uint32 _communityId,
 		Meter[] calldata _meters,
 		uint256 _escrowAmount
-	) external {
+	) external override {
 		require(
 			_meters.length > 0 && _meters.length <= 4,
 			"Invalid number of meters"
@@ -130,7 +107,7 @@ contract DecentralizedEnergyCommunity is AccessControl {
 		);
 
 		// User should have approved this contract to transfer the escrow amount
-		IERC20(token).safeTransferFrom(
+		IERC20Metadata(token).safeTransferFrom(
 			msg.sender,
 			address(this),
 			_escrowAmount
@@ -177,18 +154,15 @@ contract DecentralizedEnergyCommunity is AccessControl {
 		newCommunity.hasProducer = hasProducer;
 		newCommunity.active = active;
 		participantAddressToCommunity[msg.sender] = _communityId;
-	}
 
-	function communityIsActive(uint32 _communityId) public view returns (bool) {
-		Community storage community = communities[_communityId];
-		return community.active;
+		emit CommunityJoined(_communityId, msg.sender, _meters, _escrowAmount);
 	}
 
 	function addMeterToParticipant(
 		uint32 _communityId,
 		uint32 _participantIndex,
 		Meter calldata _newMeter
-	) external {
+	) external override {
 		Community storage community = communities[_communityId];
 		Participant storage participant = community.participants[
 			_participantIndex
@@ -223,6 +197,86 @@ contract DecentralizedEnergyCommunity is AccessControl {
 				active = true;
 			}
 		}
+
+		emit MeterAddedToParticipant(
+			_communityId,
+			_participantIndex,
+			_newMeter
+		);
+	}
+
+	/**
+	 * @notice  Seetle the balances of the participants in the community
+	 * @param   _settlements The settlements to be updated
+	 */
+	function settleCommunityBalances(
+		ParticipantSettlement[] calldata _settlements
+	) external override onlyRole(SETTLEMENT_ADMIN_ROLE) {
+		ParticipantSettlement memory settlement;
+		uint256 totalAmountEarned = 0;
+		uint256 totalAmountPaid = 0;
+		require(_settlements.length <= MAX_SETTLEMENTS, "Too many settlements");
+
+		// Add up total amount earned and total amount paid for the settlement period
+		for (uint32 i = 0; i < _settlements.length; i++) {
+			settlement = _settlements[i];
+			totalAmountEarned += settlement.amountEarned;
+			totalAmountPaid += settlement.amountPaid;
+		}
+		// Check if the total amount earned is equal to the total amount paid for the settlement period.
+		// We can't create money out of thin air.
+		require(
+			totalAmountEarned == totalAmountPaid,
+			"Amount paid not equal to amount earned"
+		);
+
+		for (uint32 i = 0; i < _settlements.length; i++) {
+			settlement = _settlements[i];
+			Community storage community = communities[settlement.communityId];
+			Participant storage participant = community.participants[
+				settlement.participantIndex
+			];
+			uint256 participantBalance = balances[participant.wallet];
+			balances[participant.wallet] =
+				participantBalance +
+				settlement.amountEarned -
+				settlement.amountPaid;
+
+			uint256 tokenUnit = 10 ** IERC20Metadata(token).decimals();
+
+			if (participantBalance < minEscrowAmount) {
+				// If the balance is less than the minimum escrow amount, the participant is set to inactive
+				participant.active = false;
+			} else {
+				participant.active = true;
+			}
+		}
+
+		emit CommunityBalancesSettled(_settlements);
+	}
+
+	function withdraw(uint256 _amount) external override {
+		require(
+			balances[msg.sender] - minEscrowAmount >= _amount,
+			"Insufficient balance to withdraw"
+		);
+		uint256 amountToWithdraw;
+		uint256 currentBalance = balances[msg.sender];
+		if (currentBalance - _amount >= minEscrowAmount) {
+			amountToWithdraw = _amount;
+		} else {
+			amountToWithdraw = _amount - minEscrowAmount;
+		}
+		balances[msg.sender] -= amountToWithdraw;
+		IERC20Metadata(token).safeTransfer(msg.sender, amountToWithdraw);
+		emit AmountWithdrawn(msg.sender, amountToWithdraw);
+	}
+
+	function communityIsActive(
+		uint32 _communityId
+	) external view override returns (bool) {
+		Community storage community = communities[_communityId];
+		return community.active;
 	}
 
 	/**
@@ -235,7 +289,7 @@ contract DecentralizedEnergyCommunity is AccessControl {
 	function generateHash(
 		uint256 value,
 		bytes32 salt
-	) public view returns (bytes32 generatedHash) {
+	) external view override returns (bytes32 generatedHash) {
 		require(salt != bytes32(0), "Invalid salt");
 		return keccak256(abi.encodePacked(address(this), value, salt));
 	}

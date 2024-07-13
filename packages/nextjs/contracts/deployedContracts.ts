@@ -5,9 +5,9 @@
 import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 
 const deployedContracts = {
-  31337: {
+  11155111: {
     DecentralizedEnergyCommunity: {
-      address: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+      address: "0xB01c65edEf79f3Ad64309f478f8F7cf802FeDfBa",
       abi: [
         {
           inputs: [
@@ -24,6 +24,183 @@ const deployedContracts = {
           ],
           stateMutability: "nonpayable",
           type: "constructor",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "participant",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "amount",
+              type: "uint256",
+            },
+          ],
+          name: "AmountWithdrawn",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              components: [
+                {
+                  internalType: "uint32",
+                  name: "communityId",
+                  type: "uint32",
+                },
+                {
+                  internalType: "uint32",
+                  name: "participantIndex",
+                  type: "uint32",
+                },
+                {
+                  internalType: "uint256",
+                  name: "amountEarned",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "amountPaid",
+                  type: "uint256",
+                },
+              ],
+              indexed: false,
+              internalType: "struct IDecentralizedEnergyCommunity.ParticipantSettlement[]",
+              name: "settlements",
+              type: "tuple[]",
+            },
+          ],
+          name: "CommunityBalancesSettled",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "uint32",
+              name: "communityId",
+              type: "uint32",
+            },
+            {
+              indexed: true,
+              internalType: "address",
+              name: "creator",
+              type: "address",
+            },
+            {
+              components: [
+                {
+                  internalType: "enum IDecentralizedEnergyCommunity.MeterType",
+                  name: "meterType",
+                  type: "uint8",
+                },
+                {
+                  internalType: "bytes32",
+                  name: "meterEAN",
+                  type: "bytes32",
+                },
+              ],
+              indexed: false,
+              internalType: "struct IDecentralizedEnergyCommunity.Meter[]",
+              name: "meters",
+              type: "tuple[]",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "escrowAmount",
+              type: "uint256",
+            },
+          ],
+          name: "CommunityCreated",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "uint32",
+              name: "communityId",
+              type: "uint32",
+            },
+            {
+              indexed: true,
+              internalType: "address",
+              name: "participant",
+              type: "address",
+            },
+            {
+              components: [
+                {
+                  internalType: "enum IDecentralizedEnergyCommunity.MeterType",
+                  name: "meterType",
+                  type: "uint8",
+                },
+                {
+                  internalType: "bytes32",
+                  name: "meterEAN",
+                  type: "bytes32",
+                },
+              ],
+              indexed: false,
+              internalType: "struct IDecentralizedEnergyCommunity.Meter[]",
+              name: "meters",
+              type: "tuple[]",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "escrowAmount",
+              type: "uint256",
+            },
+          ],
+          name: "CommunityJoined",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "uint32",
+              name: "communityId",
+              type: "uint32",
+            },
+            {
+              indexed: true,
+              internalType: "uint32",
+              name: "participantIndex",
+              type: "uint32",
+            },
+            {
+              components: [
+                {
+                  internalType: "enum IDecentralizedEnergyCommunity.MeterType",
+                  name: "meterType",
+                  type: "uint8",
+                },
+                {
+                  internalType: "bytes32",
+                  name: "meterEAN",
+                  type: "bytes32",
+                },
+              ],
+              indexed: false,
+              internalType: "struct IDecentralizedEnergyCommunity.Meter",
+              name: "meter",
+              type: "tuple",
+            },
+          ],
+          name: "MeterAddedToParticipant",
+          type: "event",
         },
         {
           anonymous: false,
@@ -140,6 +317,19 @@ const deployedContracts = {
           type: "function",
         },
         {
+          inputs: [],
+          name: "SETTLEMENT_ADMIN_ROLE",
+          outputs: [
+            {
+              internalType: "bytes32",
+              name: "",
+              type: "bytes32",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
           inputs: [
             {
               internalType: "uint32",
@@ -154,7 +344,7 @@ const deployedContracts = {
             {
               components: [
                 {
-                  internalType: "enum DecentralizedEnergyCommunity.MeterType",
+                  internalType: "enum IDecentralizedEnergyCommunity.MeterType",
                   name: "meterType",
                   type: "uint8",
                 },
@@ -164,7 +354,7 @@ const deployedContracts = {
                   type: "bytes32",
                 },
               ],
-              internalType: "struct DecentralizedEnergyCommunity.Meter",
+              internalType: "struct IDecentralizedEnergyCommunity.Meter",
               name: "_newMeter",
               type: "tuple",
             },
@@ -264,7 +454,7 @@ const deployedContracts = {
             {
               components: [
                 {
-                  internalType: "enum DecentralizedEnergyCommunity.MeterType",
+                  internalType: "enum IDecentralizedEnergyCommunity.MeterType",
                   name: "meterType",
                   type: "uint8",
                 },
@@ -274,7 +464,7 @@ const deployedContracts = {
                   type: "bytes32",
                 },
               ],
-              internalType: "struct DecentralizedEnergyCommunity.Meter[]",
+              internalType: "struct IDecentralizedEnergyCommunity.Meter[]",
               name: "_meters",
               type: "tuple[]",
             },
@@ -403,7 +593,7 @@ const deployedContracts = {
             {
               components: [
                 {
-                  internalType: "enum DecentralizedEnergyCommunity.MeterType",
+                  internalType: "enum IDecentralizedEnergyCommunity.MeterType",
                   name: "meterType",
                   type: "uint8",
                 },
@@ -413,7 +603,7 @@ const deployedContracts = {
                   type: "bytes32",
                 },
               ],
-              internalType: "struct DecentralizedEnergyCommunity.Meter[]",
+              internalType: "struct IDecentralizedEnergyCommunity.Meter[]",
               name: "_meters",
               type: "tuple[]",
             },
@@ -426,6 +616,19 @@ const deployedContracts = {
           name: "joinCommunity",
           outputs: [],
           stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "minEscrowAmount",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
           type: "function",
         },
         {
@@ -486,6 +689,41 @@ const deployedContracts = {
         {
           inputs: [
             {
+              components: [
+                {
+                  internalType: "uint32",
+                  name: "communityId",
+                  type: "uint32",
+                },
+                {
+                  internalType: "uint32",
+                  name: "participantIndex",
+                  type: "uint32",
+                },
+                {
+                  internalType: "uint256",
+                  name: "amountEarned",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "amountPaid",
+                  type: "uint256",
+                },
+              ],
+              internalType: "struct IDecentralizedEnergyCommunity.ParticipantSettlement[]",
+              name: "_settlements",
+              type: "tuple[]",
+            },
+          ],
+          name: "settleCommunityBalances",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
               internalType: "bytes4",
               name: "interfaceId",
               type: "bytes4",
@@ -515,11 +753,24 @@ const deployedContracts = {
           stateMutability: "view",
           type: "function",
         },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "_amount",
+              type: "uint256",
+            },
+          ],
+          name: "withdraw",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
       ],
       inheritedFunctions: {},
     },
     YourContract: {
-      address: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+      address: "0x12a48B5d3860B62E5405B6e37aE49b6c4D7C551A",
       abi: [
         {
           inputs: [
