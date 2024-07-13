@@ -62,6 +62,10 @@ class MeterData:
 
     @staticmethod
     def from_api(ean: EAN, time_period: TimePeriod, granularity: Granularity) -> MeterData:
+        """
+        Using a static token works but it needs to be refreshed as it expires after a while.
+        So we load smartmeter data into csv and read it from there for now
+        """
         token = fluvius.api.refresh_token()
 
         headers = {
