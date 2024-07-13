@@ -1,13 +1,8 @@
+
+from datetime import datetime, timezone
 import dataclasses
 import datetime
 
-from fastapi import FastAPI
-
-app = FastAPI()
-
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
 
 Meter=str
 ParticipantId=int
@@ -53,7 +48,6 @@ async def run() -> None:
         result = await settle(c)
         updateContract(result)
 
-
-
+        
 if __name__ == '__main__':
     run()
