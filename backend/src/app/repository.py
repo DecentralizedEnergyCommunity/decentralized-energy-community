@@ -24,7 +24,7 @@ class Repository:
     def create(dbfile: str = "ean-mappings.db") -> Repository:
         con = sqlite3.connect(dbfile, check_same_thread=False)
         # initialize the table
-        con.execute("CREATE TABLE IF NOT EXISTS ean_mapping(hash BLOB PRIMARY KEY, ean BLOB, suplier BLOB)")
+        con.execute("CREATE TABLE IF NOT EXISTS ean_mapping(hash TEXT PRIMARY KEY, ean TEXT, suplier TEXT)")
         return Repository(con, asyncio.Lock())
 
     async def add_ean_hash(self, eanMapping: EanMapping) -> None:
@@ -41,9 +41,10 @@ class Repository:
     async def get_ean(self, eanHash: str) -> Optional[models.meter.EAN]:
         async with self.lock:
             cur = self.conn.cursor()
-            cur.execute("SELECT name FROM ean_mapping WHERE hash='?'", (eanHash,))
+            cur.execute(f"SELECT ean FROM ean_mapping WHERE hash = ?", (eanHash,))
             element = cur.fetchone()
-            if element is None:
-                return None
+
+        if element is None:
+            return None
 
         return models.meter.EAN(element)
