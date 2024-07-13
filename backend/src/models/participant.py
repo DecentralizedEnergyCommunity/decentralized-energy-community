@@ -4,13 +4,14 @@ from models.meter import Meter
 
 ParticipantId=int
 
-@dataclass
+
+@dataclass(frozen=True)
 class Participant:
     active: bool
     meters: list[Meter]
 
 
-@dataclass
+@dataclass(frozen=True)
 class ParticipantResult:
     participantId: ParticipantId
     value: int

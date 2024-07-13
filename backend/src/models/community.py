@@ -2,7 +2,8 @@ import dataclasses
 
 from models.participant import Participant
 
-CommunityId=int
+CommunityId = int
+
 
 @dataclasses.dataclass
 class Community:
