@@ -13,23 +13,7 @@ from models.timeperiod import TimePeriod, genesis
 
 @pytest.fixture
 def community() -> Community:
-    participant1 = Participant(
-        id=ParticipantId(1),
-        active=True,
-        meters=[Meter(MeterType.PRODUCER, EAN("541448820044186577"))],
-    )
-
-    participant2 = Participant(
-        id=ParticipantId(2),
-        active=True,
-        meters=[Meter(MeterType.CONSUMER, EAN("541448820060527996"))],
-    )
-
-    participant3 = Participant(
-        id=ParticipantId(3), active=False, meters=[Meter(MeterType.PRODUCER, EAN("541449500000446547"))]
-    )
-
-    return Community(id=0, participants=[participant1, participant2, participant3])
+    return Community.stub()
 
 
 def test_settlement_period_1(community: Community):
