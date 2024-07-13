@@ -7,4 +7,4 @@ from models.participant import ParticipantResult
 @dataclass
 class SettlementResult:
     communityId: CommunityId
-    results: list[ParticipantResult]
+    results: list[ParticipantSettlement]
