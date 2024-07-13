@@ -19,7 +19,7 @@ class Community:
 @dataclasses.dataclass
 class Participants:
     id: int
-    active: int
+    active: bool
     meters: list[Meter]
 @dataclasses.dataclass
 class SettlmentRequest:
