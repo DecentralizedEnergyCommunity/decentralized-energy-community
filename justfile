@@ -1,8 +1,11 @@
 
 lint-mypy:
     #/bin/bash
-    cd backend
-    poetry run mypy
+    cd backend && poetry run mypy .
+
+watch-lint-mypy:
+    #/bin/bash
+    cd backend && watchexec -r -c -e .py -- just lint-mypy
 
 lint-backend:
     @just lint-mypy
