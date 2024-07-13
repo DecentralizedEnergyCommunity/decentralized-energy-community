@@ -39,15 +39,17 @@ class MeterData:
     @staticmethod
     def _load_csv(ean: EAN, filename: str, time_period: TimePeriod) -> typing.Tuple[pd.Series, pd.Series]:
         folder = Path(Path(__file__).parent.parent.parent / "data")
-        df = pd.read_csv(Path(folder / filename), delimiter=';')
+        df = pd.read_csv(Path(folder / filename), delimiter=";")
         index = pd.DatetimeIndex(
-            pd.to_datetime(df["Van Datum"] + 'T' + df["Van Tijdstip"], format='%d-%m-%YT%H:%M:%S')).tz_localize(timezone.utc)
+            pd.to_datetime(df["Van Datum"] + "T" + df["Van Tijdstip"], format="%d-%m-%YT%H:%M:%S")
+        ).tz_localize(timezone.utc)
         # FIXME localize here
         volume = (df["Volume"].str.replace(",", ".").astype(float) * 1000).fillna(0).astype(int)
-        time_slice = pd.DataFrame.from_dict({"timestamp": index,
-             ean: volume,
-             "type": df["Register"]
-         }).set_index("timestamp").loc[time_period.start:time_period.end_exclusive]
+        time_slice = (
+            pd.DataFrame.from_dict({"timestamp": index, ean: volume, "type": df["Register"]})
+            .set_index("timestamp")
+            .loc[time_period.start : time_period.end_exclusive]
+        )
         production = time_slice.loc[time_slice["type"].str.startswith("Injectie")].drop(columns=["type"])[ean]
         consumption = time_slice.loc[time_slice["type"].str.startswith("Afname")].drop(columns=["type"])[ean]
         return consumption, production
@@ -84,16 +86,13 @@ class MeterData:
 
 
 files = {
-    '541448820044186577': 'Verbruikshistoriek_elektriciteit_541448820044186577_20220110_20240708_kwartiertotalen.csv',
-    '541448820060527996': 'Verbruikshistoriek_elektriciteit_541448820060527996_20240517_20240712_kwartiertotalen.csv',
-    '541448820072026166': 'Verbruikshistoriek_elektriciteit_541448820072026166_20240707_20240709_kwartiertotalen.csv',
-    '541448860010420847': 'Verbruikshistoriek_elektriciteit_541448860010420847_20240708_20240709_kwartiertotalen.csv',
-    '541449500000446547': 'Verbruikshistoriek_elektriciteit_541449500000446547_20240624_20240709_dagtotalen.csv'
+    "541448820044186577": "Verbruikshistoriek_elektriciteit_541448820044186577_20220110_20240708_kwartiertotalen.csv",
+    "541448820060527996": "Verbruikshistoriek_elektriciteit_541448820060527996_20240517_20240712_kwartiertotalen.csv",
+    "541448820072026166": "Verbruikshistoriek_elektriciteit_541448820072026166_20240707_20240709_kwartiertotalen.csv",
+    "541448860010420847": "Verbruikshistoriek_elektriciteit_541448860010420847_20240708_20240709_kwartiertotalen.csv",
+    "541449500000446547": "Verbruikshistoriek_elektriciteit_541449500000446547_20240624_20240709_dagtotalen.csv",
 }
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     for ean in files.keys():
         MeterData.from_file(ean, TimePeriod(genesis, genesis + timedelta(weeks=1)))
-
-
-

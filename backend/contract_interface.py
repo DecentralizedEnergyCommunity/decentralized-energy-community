@@ -13,10 +13,5 @@ with open(contract_file) as f:
     contract_data = json.load(f)
 
 
-contract = web3.eth.contract(address=contract_data["address"], abi = contract_data["abi"])
+contract = web3.eth.contract(address=contract_data["address"], abi=contract_data["abi"])
 print(contract)
-
-
-
-
-

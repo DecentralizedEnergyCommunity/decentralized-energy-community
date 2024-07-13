@@ -26,9 +26,7 @@ def community() -> Community:
     )
 
     participant3 = Participant(
-        id=ParticipantId(3),
-        active=False,
-        meters=[Meter(MeterType.PRODUCER, EAN("541449500000446547"))]
+        id=ParticipantId(3), active=False, meters=[Meter(MeterType.PRODUCER, EAN("541449500000446547"))]
     )
 
     return Community(id=0, participants=[participant1, participant2, participant3])
@@ -44,7 +42,7 @@ def test_settlement_period_1(community: Community):
 
 
 def test_settlement_period_2(community: Community):
-    time_period = TimePeriod(genesis, genesis+timedelta(days=7))
+    time_period = TimePeriod(genesis, genesis + timedelta(days=7))
     settlement_result = asyncio.run(settle(time_period, community))
     assert settlement_result.community_id == 0
     total_paid = 0
@@ -54,5 +52,3 @@ def test_settlement_period_2(community: Community):
         total_earned += participation_result.amount_earned
 
     assert abs(total_paid - total_earned) < 0.0000001
-
-

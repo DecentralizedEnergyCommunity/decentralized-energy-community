@@ -45,3 +45,4 @@ dist
 *.iml
 *.ipr
 __pycache__/
+*.db
