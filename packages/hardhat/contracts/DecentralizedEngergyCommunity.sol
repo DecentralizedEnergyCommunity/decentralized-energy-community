@@ -39,6 +39,7 @@ contract DecentralizedEnergyCommunity is AccessControl {
 	uint32 public communityIds;
 	mapping(uint32 => Community) public communities;
 	mapping(address => uint32) public participantAddressToCommunity;
+	mapping(bytes32 => bool) public existingMeters;
 
 	/**
 	 * @notice  Constructor of the contract
@@ -68,6 +69,10 @@ contract DecentralizedEnergyCommunity is AccessControl {
 
 		bool hasProducer = false;
 		for (uint32 i = 0; i < _meters.length; i++) {
+			require(
+				!existingMeters[_meters[i].meterEAN],
+				"Meter with this EAN already exists"
+			);
 			newParticipant.meters[i] = _meters[i];
 			if (_meters[i].meterType == MeterType.PRODUCER) {
 				hasProducer = true;
