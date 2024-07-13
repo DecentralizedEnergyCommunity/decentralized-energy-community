@@ -8,12 +8,9 @@ from pathlib import Path
 import requests
 import pandas as pd
 
-import constants
 import fluvius
-from constants import BE_TZ
 
 from models.meter import EAN
-from models.participant import Participant
 from models.timeperiod import TimePeriod, genesis
 
 

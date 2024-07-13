@@ -9,7 +9,7 @@ from models.settlement import SettlementResult
 from models.timeperiod import TimePeriod
 
 
-async def settle(period: settlmentId, community: Community) -> SettlementResult:
+async def settle(period: SettlementId, community: Community) -> SettlementResult:
     time_period = TimePeriod.from_id(period)
 
     pool_consumed_energy_series: list[pd.Series] = []
