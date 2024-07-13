@@ -91,6 +91,5 @@ async def run() -> None:
         update_contract(result)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     run()
-

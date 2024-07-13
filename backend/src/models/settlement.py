@@ -5,7 +5,6 @@ from models.participant import ParticipantId
 from models.timeperiod import TimePeriod
 
 
-
 @dataclass(frozen=True)
 class ParticipantSettlement:
     participant_id: ParticipantId

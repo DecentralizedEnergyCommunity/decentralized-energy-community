@@ -35,7 +35,7 @@ format-frontend:
     yarn format
 
 format-backend:
-    cd backend && poetry run black
+    cd backend && poetry run black .
 
 watch-hardhead-build:
     #!/bin/bash
