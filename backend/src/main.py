@@ -14,23 +14,23 @@ CommunityId=int
 
 @dataclasses.dataclass
 class Participant:
-    id: int
+    id: ParticipantId
     active: bool
     meters: list[Meter]
 @dataclasses.dataclass
 class Community:
-    participantId: int
+    id: CommunityId
     participants: list[Participant]
 
 @dataclasses.dataclass
-class SettlementResult:
+class ParticipantResult:
     participantId: ParticipantId
     value: int
 
 @dataclasses.dataclass
 class SettlementResult:
-    community: int
-    result: list[ParticipantResult]
+    communityId: CommunityId
+    results: list[ParticipantResult]
 
 async def settle(community: Community) -> SettlementResult:
     # todo add the settlement magic here!!!
