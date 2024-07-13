@@ -36,6 +36,10 @@ class MeterData:
     def end(self) -> datetime:
         return pd.to_datetime(self.consumption.index[-1])
 
+    @property
+    def df_kwh(self) -> pd.DataFrame:
+        return pd.concat([self.consumption.rename("consumption"), self.production.rename("production")], axis=1) / 1000
+
     @staticmethod
     def _load_csv(ean: EAN, filename: str, time_period: TimePeriod) -> typing.Tuple[pd.Series, pd.Series]:
         folder = Path(Path(__file__).parent.parent.parent / "data")
@@ -89,8 +93,7 @@ files = {
     "541448820044186577": "Verbruikshistoriek_elektriciteit_541448820044186577_20220110_20240708_kwartiertotalen.csv",
     "541448820060527996": "Verbruikshistoriek_elektriciteit_541448820060527996_20240517_20240712_kwartiertotalen.csv",
     "541448820072026166": "Verbruikshistoriek_elektriciteit_541448820072026166_20240707_20240709_kwartiertotalen.csv",
-    "541448860010420847": "Verbruikshistoriek_elektriciteit_541448860010420847_20240708_20240709_kwartiertotalen.csv",
-    "541449500000446547": "Verbruikshistoriek_elektriciteit_541449500000446547_20240624_20240709_dagtotalen.csv",
+    '541449500000446547': 'Verbruikshistoriek_elektriciteit_541449500000446547_20240709_20240713_kwartiertotalen.csv'
 }
 
 if __name__ == "__main__":
