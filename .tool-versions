@@ -10,4 +10,4 @@ poetry 1.8.3
 
 # Frontend npm, or npmp, yarn you choose!
 nodejs 20
-yarn 1.22.22
+yarn 4.3.1
