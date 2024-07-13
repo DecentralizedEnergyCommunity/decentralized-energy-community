@@ -2,11 +2,12 @@ from dataclasses import dataclass
 
 from models.meter import Meter
 
-ParticipantId=int
+ParticipantId = int
 
 
 @dataclass(frozen=True)
 class Participant:
+    id: ParticipantId
     active: bool
     meters: list[Meter]
 
