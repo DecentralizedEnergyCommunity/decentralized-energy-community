@@ -1,11 +1,22 @@
+import json
+import os
 from web3 import Web3
+
+
 web3 = Web3(Web3.HTTPProvider("http://127.0.0.1:8545"))
 
-import json
+print(web3.eth.get_block_number())
+# path to the file DecentralizedEnergyCommunity.json
+contract_file = os.environ["CONTRACT_FILE"]
 
-contract_abi = json.loads('[<your_contract_ABI_here>]')
-contract_address = '0xYourContractAddress'
+with open(contract_file) as f:
+    contract_data = json.load(f)
 
-contract = web3.eth.contract(address=contract_address, abi=contract_abi)
+
+contract = web3.eth.contract(address=contract_data["address"], abi = contract_data["abi"])
+print(contract)
+
+
+
 
 
