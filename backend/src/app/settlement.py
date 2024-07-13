@@ -78,7 +78,7 @@ def update_contract(result: SettlementResult) -> None:
 
 
 async def run() -> None:
-    communities = [Community.stub()]
+    communities = [Community.create()]
 
     for c in communities:
         settlement_result = await settle(TimePeriod.quarter_hour(genesis), c)

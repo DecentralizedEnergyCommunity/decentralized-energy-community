@@ -13,7 +13,7 @@ class Community:
     participants: list[Participant]
 
     @staticmethod
-    def stub() -> Community:
+    def create() -> Community:
         participant1 = Participant(
             id=ParticipantId(1),
             active=True,

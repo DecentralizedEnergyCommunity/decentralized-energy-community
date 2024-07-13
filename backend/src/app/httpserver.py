@@ -24,7 +24,7 @@ async def store_ean(mapping: repository.EanMapping) -> None:
 @app.get("/calculate_balance")
 async def calculate_balances(ean: str, start: datetime, end: datetime):
     time_period = TimePeriod(start, end)
-    settlement_result = await settlement.settle(time_period, Community.stub())
+    settlement_result = await settlement.settle(time_period, Community.create())
     dumps = json.dumps(settlement_result, default=str, sort_keys=True)
     return JSONResponse(content=dumps, media_type="application/json")
 
