@@ -38,3 +38,4 @@ watch-hardhead-build:
     #!/bin/bash
     cd packages/hardhat
     watchexec -r -e js,ts,json -c -- yarn compile
+
