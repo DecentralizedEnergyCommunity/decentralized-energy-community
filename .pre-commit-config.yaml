@@ -1,0 +1,27 @@
+default_install_hook_types: [pre-commit, pre-push]
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v2.3.0
+    hooks:
+    -   id: end-of-file-fixer
+-   repo: local
+    hooks:
+    - id: format-js
+      name: format-js
+      entry: yarn format
+      always_run: true
+      language: system
+    - id: format-python
+      name: format-python
+      entry: just format-backend
+      language: system
+      always_run: true
+      pass_filenames: false
+    - id: test-js
+      stages: [pre-push]
+      name: test javascript
+      entry: just test-frontend
+      language: system
+      always_run: true
+      pass_filenames: false
+
