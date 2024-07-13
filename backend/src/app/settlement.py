@@ -5,11 +5,11 @@ import pandas as pd
 from models.community import Community
 from models.meter import MeterType
 from models.meterdata import MeterData
-from models.settlement import SettlementResult, SettlementId
+from models.settlement import SettlementResult, TimePeriodId, ParticipantSettlement
 from models.timeperiod import TimePeriod
 
 
-async def settle(period: SettlementId, community: Community) -> SettlementResult:
+async def settle(period: TimePeriodId, community: Community) -> SettlementResult:
     time_period = TimePeriod.from_id(period)
 
     pool_consumed_energy_series: list[pd.Series] = []
