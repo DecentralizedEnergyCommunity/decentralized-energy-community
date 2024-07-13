@@ -13,7 +13,7 @@ from models.timeperiod import TimePeriod, genesis
 
 @pytest.fixture
 def community() -> Community:
-    return Community.stub()
+    return Community.create()
 
 
 def test_settlement_period_1(community: Community):
