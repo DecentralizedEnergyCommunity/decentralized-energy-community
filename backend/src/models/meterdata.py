@@ -1,13 +1,17 @@
 from __future__ import annotations
 
+import io
+import urllib
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 
 import pandas as pd
 
-from backend.src.domain.meter import EAN
-from backend.src.domain.participant import Participant
+import fluvius
+
+from models.meter import EAN
+from models.participant import Participant
 
 
 class Granularity:
@@ -19,7 +23,7 @@ class Granularity:
 
 @dataclass(frozen=True)
 class MeterData:
-    ean: str
+    ean: EAN
     readings: pd.DataFrame
 
     @property
@@ -45,6 +49,24 @@ class MeterData:
         df = MeterData.load_csv(filename)
         return MeterData(ean, df)
 
+    @staticmethod
+    def fetch(ean: EAN, start: datetime, end: datetime, granularity: Granularity, requests=None) -> MeterData:
+        token = fluvius.api.refresh_token()
+
+        headers = {
+            "Accept-Encoding": "gzip, deflate, br, zstd",
+            "Authorization": token,
+        }
+
+        start_str = urllib.parse.quote(start.strftime("%Y-%m-%dT%H:%M:%S%z"))
+        end_str = urllib.parse.quote(end.strftime("%Y-%m-%dT%H:%M:%S%z"))
+        endpoint = f"https://mijn.fluvius.be/verbruik/api/consumption-histories/{ean}/report?historyFrom={start_str}&historyUntil={end_str}&granularity={granularity}&asServiceProvider=false"
+        response = requests.get(endpoint, headers=headers)
+        print(response.text)
+
+        df = (MeterData.load_csv(io.StringIO(response.text), index_col=0))
+        return MeterData(ean, df)
+
 
 @dataclass
 class SharingKey:
@@ -57,6 +79,7 @@ if __name__ == '__main__':
     meterdata1 = MeterData.from_csv('541448820044186577', 'Verbruikshistoriek_elektriciteit_541448820044186577_20220110_20240708_kwartiertotalen.csv')
     meterdata2 = MeterData.from_csv('541448820060527996',
                                     'Verbruikshistoriek_elektriciteit_541448820044186577_20220110_20240708_kwartiertotalen.csv')
+
 
 
 
