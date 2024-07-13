@@ -2,8 +2,8 @@ from dataclasses import dataclass
 
 from models.community import CommunityId
 from models.participant import ParticipantId
+from models.timeperiod import TimePeriod
 
-TimePeriodId = int
 
 
 @dataclass(frozen=True)
@@ -15,6 +15,6 @@ class ParticipantSettlement:
 
 @dataclass
 class SettlementResult:
-    id: TimePeriodId
+    id: TimePeriod
     community_id: CommunityId
     results: list[ParticipantSettlement]

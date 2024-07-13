@@ -1,16 +1,16 @@
+import decimal
 from datetime import date
+from decimal import Decimal
 
 import pandas as pd
 
 from models.community import Community
 from models.meterdata import MeterData
-from models.settlement import SettlementResult, TimePeriodId, ParticipantSettlement
+from models.settlement import SettlementResult, ParticipantSettlement
 from models.timeperiod import TimePeriod
 
 
-async def settle(period: TimePeriodId, community: Community) -> SettlementResult:
-    time_period = TimePeriod.from_id(period)
-
+async def settle(time_period: TimePeriod, community: Community) -> SettlementResult:
     pool_consumed_energy_series: list[pd.Series] = []
     pool_produced_energy_series: list[pd.Series] = []
 
@@ -41,7 +41,7 @@ async def settle(period: TimePeriodId, community: Community) -> SettlementResult
     traded_energy = pd.concat([total_produced_energy, total_consumed_energy], axis=1).min(axis=1)
 
     # the average price of each quarter
-    quarterly_price = get_monthly_price(time_period.start.date())
+    quarterly_price = get_monthly_price_eur_kwh(time_period.start.date()) / 1000
     traded_euros = quarterly_price * traded_energy
 
     settled_euros_consumer = traded_euros.sum() * producer_participation
@@ -62,10 +62,10 @@ async def settle(period: TimePeriodId, community: Community) -> SettlementResult
             ParticipantSettlement(participant_id=participant.id, amount_paid=amount_paid, amount_earned=amount_earned)
         )
 
-    return SettlementResult(period, community.id, results)
+    return SettlementResult(time_period, community.id, results)
 
 
-def get_monthly_price(month: date) -> float:
+def get_monthly_price_eur_kwh(month: date) -> decimal.Decimal:
     """
     We use spread between average price for injection and consumption for july, according to Vreg website (belgian energy regulator).
     This data can be fetched from their API instead
