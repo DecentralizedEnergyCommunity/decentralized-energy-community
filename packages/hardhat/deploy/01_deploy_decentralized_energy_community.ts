@@ -22,10 +22,13 @@ const deployDecentralizedEnergyCommunity: DeployFunction = async function (hre: 
   const { deployer } = await hre.getNamedAccounts();
   const { deploy } = hre.deployments;
 
+  // Get the address of the EURC token to be used by the contract. If not defined, use the Ethereum Sepolia address
+  const eurcAddress = process.env.EURC_ADDRESS ?? "0x08210F9170F89Ab7658F0B5E3fF39b0E03C594D4";
+
   await deploy("DecentralizedEnergyCommunity", {
     from: deployer,
     // Contract constructor arguments
-    args: [deployer],
+    args: [deployer, eurcAddress],
     log: true,
     // autoMine: can be passed to the deploy function to make the deployment process faster on local networks by
     // automatically mining the contract deployment transaction. There is no effect on live networks.
