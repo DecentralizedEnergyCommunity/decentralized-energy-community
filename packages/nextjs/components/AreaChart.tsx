@@ -141,7 +141,7 @@ export function ChartComponent() {
     <Card>
       <CardHeader className="flex items-center gap-2 space-y-0 border-b py-5 sm:flex-row">
         <div className="grid flex-1 gap-1 text-center sm:text-left">
-          <CardTitle>Community Energy Production</CardTitle>
+          <CardTitle>Community Energy Production (Mock)</CardTitle>
           <CardDescription>Showing total energy production, you vs your community (kw/h)</CardDescription>
         </div>
         <Select value={timeRange} onValueChange={setTimeRange}>

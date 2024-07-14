@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import { ChartComponent } from "~~/components/AreaChart";
+import BarGraph from "~~/components/UI/BarGraph";
 import { PieChartComponent } from "~~/components/UI/PieChart";
 import { Address } from "~~/components/scaffold-eth";
 import deployedContracts from "~~/contracts/deployedContracts";
@@ -52,6 +53,7 @@ export default function DashboardHome() {
         <div className="grid gap-4 grid-cols-1 md:grid-cols-3">
           <div className="col-span-1 md:col-span-2">
             <ChartComponent />
+            <BarGraph />
           </div>
           <div>
             <PieChartComponent />

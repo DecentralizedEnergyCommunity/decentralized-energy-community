@@ -48,7 +48,7 @@ export function PieChartComponent() {
   return (
     <Card className="flex h-full flex-col">
       <CardHeader className="items-center pb-0">
-        <CardTitle>Community Energy Share </CardTitle>
+        <CardTitle>Community Energy Share (Mock) </CardTitle>
         <CardDescription>July 2024</CardDescription>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
