@@ -1,12 +1,9 @@
 import { expect } from "chai";
 import { ethers } from "hardhat";
-import { ZeroAddress, ZeroHash } from "ethers";
+import { ZeroAddress } from "ethers";
 import { DecentralizedEnergyCommunity, SampleERC20 } from "../typechain-types";
 import { SignerWithAddress } from "@nomicfoundation/hardhat-ethers/signers";
-import {
-  anyUint,
-  anyValue,
-} from "@nomicfoundation/hardhat-chai-matchers/withArgs";
+import { anyValue } from "@nomicfoundation/hardhat-chai-matchers/withArgs";
 
 describe("DecentralizedEnergyCommunity", function () {
   // We define a fixture to reuse the same setup in every test.
@@ -29,7 +26,10 @@ describe("DecentralizedEnergyCommunity", function () {
     await sampleERC20.connect(owner).transfer(addr1.address, transferAmount);
 
     const decentralizedEnergyCommunityContractFactory = await ethers.getContractFactory("DecentralizedEnergyCommunity");
-    decentralizedEnergyCommunity = (await decentralizedEnergyCommunityContractFactory.deploy(owner.address, await sampleERC20.getAddress())) as DecentralizedEnergyCommunity;
+    decentralizedEnergyCommunity = (await decentralizedEnergyCommunityContractFactory.deploy(
+      owner.address,
+      await sampleERC20.getAddress(),
+    )) as DecentralizedEnergyCommunity;
     await decentralizedEnergyCommunity.waitForDeployment();
   });
 
@@ -80,7 +80,7 @@ describe("DecentralizedEnergyCommunity", function () {
         // Prepare meters array
         const meters = [
           { meterType: 1, meterEAN: hashedEan1 }, // Assuming 1 is PRODUCER
-          { meterType: 2, meterEAN: hashedEan2 }  // Assuming 2 is CONSUMER
+          { meterType: 2, meterEAN: hashedEan2 }, // Assuming 2 is CONSUMER
         ];
 
         // Set escrow amount
