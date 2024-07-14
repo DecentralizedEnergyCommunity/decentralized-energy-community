@@ -4,5 +4,5 @@ COPY . /app
 
 WORKDIR /app/backend
 
-RUN pip install poetry --no-root
-RUN ["fastapi", "dev", "backend/src/app/httpserver.py"]
+RUN pip install poetry
+RUN ["backend/.venv/bin/fastapi", "dev", "backend/src/app/httpserver.py"]

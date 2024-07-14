@@ -44,17 +44,17 @@ class MeterData:
     @staticmethod
     def _load_csv(ean: EAN, filename: str, time_period: TimePeriod) -> typing.Tuple[pd.Series, pd.Series]:
         folder = Config.data_dir()
-        df = pd.read_csv(Path(folder / filename), delimiter=";")
+        df = pd.read_csv(Path(folder / filename), delimiter=",", dtype={"Van Datum": str, "Van Datum": str, "Tot Datum": str, "Tot Tijdstip": str, "Volume": str, "Register": str})
         index = pd.DatetimeIndex(
             pd.to_datetime(df["Van Datum"] + "T" + df["Van Tijdstip"], format="%d-%m-%YT%H:%M:%S")
         ).tz_localize(timezone.utc)
         # FIXME localize here
-        volume = (df["Volume"].str.replace(",", ".").astype(float) * 1000).fillna(0).astype(int)
-        time_slice = (
-            pd.DataFrame.from_dict({"timestamp": index, ean: volume, "type": df["Register"]})
-            .set_index("timestamp")
-            .loc[time_period.start : time_period.end_exclusive]
-        )
+        volume = (df["Volume"].astype(float) * 1000).fillna(0).astype(int)
+
+        df = pd.DataFrame.from_dict({"timestamp": index, ean: volume, "type": df["Register"]}).set_index("timestamp")
+
+        time_slice = df.loc[time_period.start : time_period.end_exclusive]
+
         production = time_slice.loc[time_slice["type"].str.startswith("Injectie")].drop(columns=["type"])[ean]
         consumption = time_slice.loc[time_slice["type"].str.startswith("Afname")].drop(columns=["type"])[ean]
         return consumption, production
@@ -93,7 +93,7 @@ class MeterData:
         return MeterData(ean, consumption, production)
 
 
-config = Config.load()["ean"]
+config = Config.load()["eans"]
 
 files = {
     config["ean1"]: "Verbruikshistoriek_elektriciteit_20220110_20240708_kwartiertotalen.csv",
@@ -104,4 +104,5 @@ files = {
 
 if __name__ == "__main__":
     for ean in files.keys():
-        MeterData.from_api(ean, TimePeriod(genesis, genesis + timedelta(weeks=1)), Granularity.QUARTER_H)
+        a = MeterData.from_file(ean, TimePeriod(genesis, genesis + timedelta(weeks=1)))
+        print(a)

@@ -47,8 +47,5 @@ if __name__ == "__main__":
     end = datetime.now(timezone.utc)
     time_period = TimePeriod(start, end)
     settlement_result = asyncio.run(settlement.settle(time_period, Community.create()))
-    results = [asdict(result) for result in settlement_result.results if ean541448820060527996 in result.eans]
-    ean = ean541448820060527996
-    json_response = json.dumps(results, default=str, sort_keys=True)
 
 
