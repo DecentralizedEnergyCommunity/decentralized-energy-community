@@ -664,7 +664,7 @@ const deployedContracts = {
   },
   11155111: {
     DecentralizedEnergyCommunity: {
-      address: "0xB01c65edEf79f3Ad64309f478f8F7cf802FeDfBa",
+      address: "0x46dCeEBfeEf86f3007dD66c64768c7f38f1230c8",
       abi: [
         {
           inputs: [

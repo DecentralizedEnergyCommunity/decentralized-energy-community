@@ -242,8 +242,6 @@ contract DecentralizedEnergyCommunity is
 				settlement.amountEarned -
 				settlement.amountPaid;
 
-			uint256 tokenUnit = 10 ** IERC20Metadata(token).decimals();
-
 			if (participantBalance < minEscrowAmount) {
 				// If the balance is less than the minimum escrow amount, the participant is set to inactive
 				participant.active = false;
