@@ -22,8 +22,25 @@ const deployDecentralizedEnergyCommunity: DeployFunction = async function (hre: 
   const { deployer } = await hre.getNamedAccounts();
   const { deploy } = hre.deployments;
 
-  // Get the address of the EURC token to be used by the contract. If not defined, use the Ethereum Sepolia address
-  const eurcAddress = process.env.EURC_ADDRESS ?? "0x08210F9170F89Ab7658F0B5E3fF39b0E03C594D4";
+  console.log("hre.network.name:", hre.network.name);
+
+  let eurcAddress: string;
+
+  // Deploy mock token on local envs
+  if (hre.network.name === "localhost" || hre.network.name === "hardhat") {
+    await deploy("SampleERC20", {
+      from: deployer,
+      args: ["Sample, ERC20", "SERC20", 18, 100_000n],
+      log: true,
+      autoMine: true,
+    });
+    eurcAddress = (await hre.deployments.get("SampleERC20")).address;
+  } else {
+    // Get the address of the EURC token to be used by the contract. If not defined, use the Ethereum Sepolia address
+    eurcAddress = process.env.EURC_ADDRESS ?? "0x08210F9170F89Ab7658F0B5E3fF39b0E03C594D4";
+  }
+
+  console.log("Deploying DecentralizedEnergyCommunity with eurcAddress:", eurcAddress);
 
   await deploy("DecentralizedEnergyCommunity", {
     from: deployer,

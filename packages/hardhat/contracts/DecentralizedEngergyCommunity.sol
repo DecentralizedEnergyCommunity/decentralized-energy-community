@@ -6,6 +6,8 @@ import { AccessControl } from "@openzeppelin/contracts/access/AccessControlEnume
 import { IERC20Metadata } from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
+import "hardhat/console.sol";
+
 /**
  * @title   DecentralizedEnergyCommunity
  * @notice  This contract is the main contract for the Decentralized Energy Community
@@ -35,6 +37,8 @@ contract DecentralizedEnergyCommunity is
 	 * @param   _token The address of the token contract that will be used for escrow and settlement
 	 */
 	constructor(address _defaultAdmin, address _token) {
+		require(_defaultAdmin != address(0), "Invalid default admin address");
+		require(_token != address(0), "Invalid token address");
 		_setupRole(DEFAULT_ADMIN_ROLE, _defaultAdmin);
 		token = _token;
 		minEscrowAmount = 100 * (10 ** IERC20Metadata(_token).decimals()); //100 in token decimals
@@ -57,7 +61,7 @@ contract DecentralizedEnergyCommunity is
 		);
 		balances[msg.sender] += _escrowAmount;
 
-		uint32 communityId = communityIds++;
+		uint32 communityId = ++communityIds;
 
 		Community storage newCommunity = communities[communityId];
 		newCommunity.id = communityId;
