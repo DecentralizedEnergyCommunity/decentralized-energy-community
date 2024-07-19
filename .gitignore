@@ -1,6 +1,9 @@
 # dependencies
 node_modules
 
+backend/application.toml
+backend/.venv
+
 # yarn
 .yarn/*
 !.yarn/patches
